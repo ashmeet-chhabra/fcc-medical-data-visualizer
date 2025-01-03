@@ -55,11 +55,10 @@ def draw_cat_plot():
 def draw_heat_map():
     # 11
     # df_heat = None
-    df_heat = df[df['ap_lo'] <= df['ap_hi']]
-    df_heat = df_heat[df_heat['height'] <= df_heat['height'].quantile(0.9725)]
-    df_heat = df_heat[df_heat['weight'] >= df_heat['weight'].quantile(0.025)]
-    df_heat = df_heat[df_heat['weight'] <= df_heat['weight'].quantile(0.9725)]
-    df_heat = df_heat[df_heat['height'] >= df_heat['height'].quantile(0.025)]
+    cholesterol_mask = df['ap_lo'] <= df['ap_hi']
+    height_mask = (df['height'] <= df['height'].quantile(0.975)) & (df['height'] >= df['height'].quantile(0.025))
+    weight_mask = (df['weight'] >= df['weight'].quantile(0.025)) & (df['weight'] <= df['weight'].quantile(0.975))
+    df_heat = df[cholesterol_mask & height_mask & weight_mask]
 
 
     # 12
@@ -77,7 +76,8 @@ def draw_heat_map():
     fig, ax = plt.subplots(figsize=(12, 6))
 
     # 15
-    sns.heatmap(corr, mask=mask)
+    sns.heatmap(corr, mask=mask, annot=True, fmt='.1f')
+    # sns.heatmap(corr, mask=mask, annot=True)
 
 
     # 16
